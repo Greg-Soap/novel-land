@@ -28,6 +28,7 @@ export const getMetadata = async (book: Book): Promise<Metadata> => {
     creator: metadata.creator,
     description: metadata.description,
     publisher: metadata.publisher,
+    // @ts-expect-error: isbn is not defined in the type
     isbn: metadata.isbn,
   }
 }
@@ -39,6 +40,7 @@ export const getTableOfContents = async (book: Book): Promise<TocItem[]> => {
 
 export const getCurrentLocation = (rendition: Rendition): string => {
   const location = rendition.currentLocation()
+  // @ts-expect-error: start is not defined in the type
   return location.start.cfi
 }
 
@@ -68,12 +70,13 @@ export const removeBookmark = (bookId: string, cfi: string): void => {
   }
 }
 
-export const search = async (book: Book, query: string): Promise<any[]> => {
+export const search = async (book: Book, query: string): Promise<unknown[]> => {
+  // @ts-expect-error: search is not defined in the type
   const results = await book.search(query)
   return results
 }
 
-export const getChapter = async (book: Book, chapterId: string): Promise<any> => {
+export const getChapter = async (book: Book, chapterId: string): Promise<unknown> => {
   const chapter = await book.spine.get(chapterId)
   return chapter
 }
