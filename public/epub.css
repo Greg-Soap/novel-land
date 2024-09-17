@@ -11,7 +11,7 @@ html {
   --header-bg: rgba(255, 255, 255, 0.8);
 }
 
-html.dark {
+body.dark {
   --bg-color: #121212;
   --text-color: #e0e0e0;
   --card-bg: #242424;
@@ -24,23 +24,12 @@ body {
   color: var(--text-color);
 }
 
-.card {
-  background-color: var(--card-bg);
-  box-shadow: 0 4px 6px var(--card-shadow);
-}
-
-header {
-  background-color: var(--header-bg);
-  backdrop-filter: blur(8px);
-}
-
 body {
   padding: 0 !important;
 }
 
 p {
   font-size: 18px; /* Default size for mobile */
-  color: var(--text-color);
 }
 
 /* Tablet size */
