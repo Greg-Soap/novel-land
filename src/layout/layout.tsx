@@ -8,7 +8,7 @@ export default function Layout({
   return (
     <div className='flex flex-col min-h-screen'>
       <Header />
-      <main className='flex-grow container px-4 mx-auto relative mb-12'>{children}</main>
+      <main className='flex-grow container px-4 mx-auto relative '>{children}</main>
       {!noFooter && <Footer />}
     </div>
   )

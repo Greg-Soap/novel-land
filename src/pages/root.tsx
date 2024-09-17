@@ -1,13 +1,13 @@
-import GradualSpacing from '@/components/magicui/gradual-spacing'
+import WordPullUp from '@/components/magicui/word-pull-up'
 import Layout from '@/layout/layout'
 
 export default function Root() {
   return (
     <Layout>
       <div className='max-w-4xl mx-auto py-12 px-4 text-center'>
-        <GradualSpacing
+        <WordPullUp
           className='font-display text-center font-heading text-4xl font-bold tracking-[-0.1em] mb-4 text-black dark:text-white md:text-7xl md:leading-[5rem]'
-          text='My Digital Bookshelf'
+          words='My Digital Bookshelf'
         />
 
         <p className='text-lg mb-8 text-secondary-foreground'>
@@ -45,7 +45,7 @@ export default function Root() {
 
 function FeatureItem({ title, description }: { title: string; description: string }) {
   return (
-    <div className='bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300'>
+    <div className='card bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg hover:shadow-xl transition-shadow duration-300'>
       <h2 className='text-2xl font-bold mb-3 font-heading'>{title}</h2>
       <p className='text-secondary-foreground'>{description}</p>
     </div>

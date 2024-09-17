@@ -25,7 +25,7 @@ function NovelViewer() {
   const [isMenuExpanded, setIsMenuExpanded] = useState(false)
 
   useEffect(() => {
-    let isMounted = true
+    const isMounted = true
 
     async function initializeBook() {
       if (!filename || bookRef.current) return
@@ -78,7 +78,6 @@ function NovelViewer() {
     initializeBook()
 
     return () => {
-      isMounted = false
       if (bookRef.current) {
         bookRef.current.destroy()
         bookRef.current = null
@@ -152,79 +151,110 @@ function NovelViewer() {
 
   return (
     <Layout noFooter>
-      <div className={cn('flex flex-col h-screen relative ')}>
-        <div className='container mx-auto max-w-7xl pb-20'>
-          <div ref={viewerRef} />
+      <div className='flex flex-col min-h-screen'>
+        <div className='flex-grow md:container md:mx-auto max-w-7xl sm:px-6 lg:px-8 pt-8 pb-20'>
+          <div ref={viewerRef} className='h-full' />
         </div>
-        <footer className=' text-gray-500 py-6'>
-          <div className='container mx-auto'>
-            <p className='text-center text-sm md:text-base'>
-              @ {new Date().getFullYear()} Greg's Novel-Land
-            </p>
-          </div>
-        </footer>
+        <Footer />
         {rendition && (
-          <div
-            className={cn(
-              'fixed bottom-4 right-4 bg-background/80 backdrop-blur-sm rounded-lg shadow-lg transition-all duration-300 ease-in-out',
-              isMenuExpanded ? 'w-full md:w-[400px] p-4' : 'w-12 h-12',
-            )}>
-            <div
-              className={cn(
-                ' inset-0 p-4 transition-all duration-300 ease-in-out space-y-8',
-                isMenuExpanded ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none',
-              )}>
-              <Button
-                onClick={toggleMenu}
-                variant='ghost'
-                size='sm'
-                className='absolute top-2 right-2'>
-                <ChevronRightIcon className='h-4 w-4' />
-              </Button>
-              <div className='flex justify-between items-center space-x-2 pt-6'>
-                <Button onClick={() => handlePageChange('prev')} variant='outline' size='sm'>
-                  Prev
-                </Button>
-                <Button onClick={() => handlePageChange('next')} variant='outline' size='sm'>
-                  Next
-                </Button>
-              </div>
-              <Select value={currentChapter} onValueChange={handleChapterChange}>
-                <SelectTrigger className='w-full'>
-                  <SelectValue placeholder='Chapter' />
-                </SelectTrigger>
-                <SelectContent>
-                  {toc.map((chapter) => (
-                    <SelectItem key={chapter.href} value={chapter.href}>
-                      {chapter.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {/* <div className='flex items-center justify-between'>
-                <Button onClick={() => updateFontSize(-1)} variant='outline' size='sm'>
-                  A-
-                </Button>
-                <span>{currentFontSize}px</span>
-                <Button onClick={() => updateFontSize(1)} variant='outline' size='sm'>
-                  A+
-                </Button>
-              </div> */}
-            </div>
-            <Button
-              onClick={toggleMenu}
-              variant='ghost'
-              size='sm'
-              className={cn(
-                ' absolute bottom-0 right-0 w-full h-full p-0 transition-all duration-300 ease-in-out',
-                isMenuExpanded ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100',
-              )}>
-              <MenuIcon className='h-6 w-6' />
-            </Button>
-          </div>
+          <ControlPanel
+            isMenuExpanded={isMenuExpanded}
+            toc={toc}
+            currentChapter={currentChapter}
+            onChapterChange={handleChapterChange}
+            onPageChange={handlePageChange}
+            onToggleMenu={toggleMenu}
+          />
         )}
       </div>
     </Layout>
+  )
+}
+
+function Footer() {
+  return (
+    <footer className='bg-transparent  py-6 mt-auto'>
+      <div className='container mx-auto px-4'>
+        <p className='text-center text-sm md:text-base'>
+          @ {new Date().getFullYear()} Greg's Novel-Land
+        </p>
+      </div>
+    </footer>
+  )
+}
+
+function ControlPanel({
+  isMenuExpanded,
+  toc,
+  currentChapter,
+  onChapterChange,
+  onPageChange,
+  onToggleMenu,
+}: {
+  isMenuExpanded: boolean
+  toc: NavItem[]
+  currentChapter: string
+  onChapterChange: (href: string) => void
+  onPageChange: (direction: 'prev' | 'next') => void
+  onToggleMenu: () => void
+}) {
+  return (
+    <div
+      className={cn(
+        'fixed bottom-4 right-4 bg-background/80 backdrop-blur-sm border border-border rounded-lg shadow-lg transition-all duration-300 ease-in-out',
+        isMenuExpanded ? 'w-[calc(100%-2rem)] md:w-[400px] p-4' : 'w-12 h-12',
+      )}>
+      <div
+        className={cn(
+          'inset-0 p-4 transition-all duration-300 ease-in-out space-y-8',
+          isMenuExpanded ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none',
+        )}>
+        <Button onClick={onToggleMenu} variant='ghost' size='sm' className='absolute top-2 right-2'>
+          <ChevronRightIcon className='h-4 w-4' />
+        </Button>
+        <div className='flex flex-col space-y-4 pt-6'>
+          <div className='grid grid-cols-2 gap-4'>
+            <Button
+              onClick={() => onPageChange('prev')}
+              variant='default'
+              size='sm'
+              className='w-full'>
+              Prev
+            </Button>
+            <Button
+              onClick={() => onPageChange('next')}
+              variant='default'
+              size='sm'
+              className='w-full'>
+              Next
+            </Button>
+          </div>
+          <Select value={currentChapter} onValueChange={onChapterChange}>
+            <SelectTrigger className='w-full'>
+              <SelectValue placeholder='Chapter' />
+            </SelectTrigger>
+            <SelectContent>
+              {toc.map((chapter) => (
+                <SelectItem key={chapter.href} value={chapter.href}>
+                  {chapter.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      <Button
+        onClick={onToggleMenu}
+        variant='default'
+        size='sm'
+        className={cn(
+          'absolute bottom-0 right-0 w-full h-full p-0 transition-all duration-300 ease-in-out',
+          isMenuExpanded ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100',
+          'bg-primary text-primary-foreground hover:bg-primary/90',
+        )}>
+        <MenuIcon className='h-6 w-6' />
+      </Button>
+    </div>
   )
 }
 
