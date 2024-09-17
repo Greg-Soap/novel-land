@@ -1,4 +1,3 @@
 {
-  "redirects": [{ "source": "/", "destination": "/novels", "permanent": true }],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
