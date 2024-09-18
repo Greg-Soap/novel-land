@@ -11,7 +11,7 @@ import {
   SelectItem,
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
-import { ChevronRightIcon, Loader2, MenuIcon } from 'lucide-react'
+import { ChevronLeftIcon, ChevronRightIcon, Loader2, MenuIcon } from 'lucide-react'
 import Layout from '@/layout/layout'
 import { useTheme } from './theme-provider'
 
@@ -113,6 +113,7 @@ function NovelViewer() {
     }
   }, [rendition, theme, filename, toc])
 
+  // Handle chapter changes
   const handleChapterChange = useCallback(
     (href: string) => {
       if (rendition) {
@@ -122,6 +123,7 @@ function NovelViewer() {
     [rendition],
   )
 
+  // Handle page changes
   const handlePageChange = useCallback(
     (direction: 'prev' | 'next') => {
       if (rendition) {
@@ -132,6 +134,7 @@ function NovelViewer() {
     [rendition],
   )
 
+  // Toggle the menu
   const toggleMenu = useCallback(() => {
     setIsMenuExpanded((prev) => !prev)
   }, [])
@@ -140,8 +143,26 @@ function NovelViewer() {
     <Layout noFooter>
       {isLoading && <Loading />}
       <div className={`flex flex-col min-h-screen ${theme}`}>
-        <div className='flex-grow md:container md:mx-auto max-w-7xl sm:px-6 lg:px-8 pt-8 pb-20'>
+        <div className='flex-grow md:container md:mx-auto max-w-7xl sm:px-6 lg:px-8 pt-8 pb-16'>
           <div ref={viewerRef} className='h-full' />
+        </div>
+        <div className='w-full pb-10 max-w-[400px] mx-auto'>
+          <div className='flex justify-center items-center space-x-2'>
+            <Button
+              onClick={() => handlePageChange('prev')}
+              variant='default'
+              size='sm'
+              className='w-full'>
+              <ChevronLeftIcon className='h-4 w-4' /> Prev
+            </Button>
+            <Button
+              onClick={() => handlePageChange('next')}
+              variant='default'
+              size='sm'
+              className='w-full'>
+              Next <ChevronRightIcon className='h-4 w-4' />
+            </Button>
+          </div>
         </div>
         <Footer />
         {rendition && (
@@ -206,14 +227,14 @@ function ControlPanel({
             variant='default'
             size='sm'
             className='w-full'>
-            Prev
+            <ChevronLeftIcon className='h-4 w-4' /> Prev
           </Button>
           <Button
             onClick={() => onPageChange('next')}
             variant='default'
             size='sm'
             className='w-full'>
-            Next
+            Next <ChevronRightIcon className='h-4 w-4' />
           </Button>
         </div>
         <Select value={currentChapter} onValueChange={onChapterChange}>
