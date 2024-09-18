@@ -48,7 +48,10 @@ function NovelViewer() {
         const navigation = await newBook.loaded.navigation
         if (navigation?.toc) {
           setToc(navigation.toc)
-          if (navigation.toc.length > 0) {
+          const firstContentChapter = findFirstContentChapter(navigation.toc)
+          if (firstContentChapter) {
+            setCurrentChapter(firstContentChapter)
+          } else if (navigation.toc.length > 0) {
             setCurrentChapter(navigation.toc[0].href)
           }
         }
@@ -96,7 +99,14 @@ function NovelViewer() {
       if (savedLocation) {
         rendition.display(savedLocation)
       } else {
-        rendition.display()
+        // Find the first content chapter
+        const firstContentChapter = findFirstContentChapter(toc)
+        if (firstContentChapter) {
+          rendition.display(firstContentChapter)
+          setCurrentChapter(firstContentChapter)
+        } else {
+          rendition.display()
+        }
       }
 
       rendition.on('relocated', (location: Location) => {
@@ -266,3 +276,18 @@ function ControlPanel({
 }
 
 export default NovelViewer
+
+const findFirstContentChapter = (toc: NavItem[]): string | null => {
+  // Skip items that are likely to be cover, info, or table of contents
+  const skipTitles = ['cover', 'title', 'copyright', 'contents', 'table of contents', 'information']
+
+  for (const item of toc) {
+    const lowerLabel = item.label.toLowerCase()
+    if (!skipTitles.some((title) => lowerLabel.includes(title))) {
+      return item.href
+    }
+  }
+
+  // If no suitable chapter found, return the first chapter
+  return toc.length > 0 ? toc[0].href : null
+}
