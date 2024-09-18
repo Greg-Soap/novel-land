@@ -11,7 +11,7 @@ import {
   SelectItem,
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
-import { ChevronLeftIcon, ChevronRightIcon, Loader2, MenuIcon } from 'lucide-react'
+import { ChevronLeftIcon, ChevronRightIcon, Loader2, MenuIcon, PlayIcon, XIcon } from 'lucide-react'
 import Layout from '@/layout/layout'
 import { useTheme } from './theme-provider'
 
@@ -36,6 +36,8 @@ function NovelViewer() {
   const [currentChapter, setCurrentChapter] = useState<string>('')
   const [isMenuExpanded, setIsMenuExpanded] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [isSpeaking, setIsSpeaking] = useState(false)
+  // const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(null)
 
   // Load the book
   useEffect(() => {
@@ -144,6 +146,48 @@ function NovelViewer() {
     [rendition],
   )
 
+  // Handle speaking
+  const speak = useCallback(() => {
+    if (!rendition) return
+
+    if (isSpeaking) {
+      window.speechSynthesis.cancel()
+      setIsSpeaking(false)
+      return
+    }
+
+    const contents = rendition.getContents()
+    console.log('contents', contents)
+    // @ts-expect-error ignore
+    if (contents.length === 0) return
+
+    // @ts-expect-error ignore
+    const content = contents[0]
+
+    const text = content.documentElement.textContent || ''
+
+    const newUtterance = new SpeechSynthesisUtterance(text)
+    newUtterance.onend = () => {
+      setIsSpeaking(false)
+      handlePageChange('next')
+    }
+
+    // setUtterance(newUtterance)
+    setIsSpeaking(true)
+    window.speechSynthesis.speak(newUtterance)
+  }, [rendition, isSpeaking, handlePageChange])
+
+  // console.log('contents', rendition?.getContents())
+
+  // Cleanup speech synthesis
+  useEffect(() => {
+    return () => {
+      if (isSpeaking) {
+        window.speechSynthesis.cancel()
+      }
+    }
+  }, [isSpeaking])
+
   // Toggle the menu
   const toggleMenu = useCallback(() => {
     setIsMenuExpanded((prev) => !prev)
@@ -183,6 +227,8 @@ function NovelViewer() {
             onChapterChange={handleChapterChange}
             onPageChange={handlePageChange}
             onToggleMenu={toggleMenu}
+            onToggleTTS={speak}
+            isSpeaking={isSpeaking}
           />
         )}
       </div>
@@ -209,6 +255,8 @@ function ControlPanel({
   onChapterChange,
   onPageChange,
   onToggleMenu,
+  onToggleTTS,
+  isSpeaking,
 }: {
   isMenuExpanded: boolean
   toc: NavItem[]
@@ -216,6 +264,8 @@ function ControlPanel({
   onChapterChange: (href: string) => void
   onPageChange: (direction: 'prev' | 'next') => void
   onToggleMenu: () => void
+  onToggleTTS: () => void
+  isSpeaking: boolean
 }) {
   return (
     <div
@@ -230,6 +280,9 @@ function ControlPanel({
         )}>
         <Button onClick={onToggleMenu} variant='ghost' size='sm' className='absolute top-2 right-2'>
           <ChevronRightIcon className='h-4 w-4' />
+        </Button>
+        <Button onClick={onToggleTTS} variant='default' size='sm' className='w-full'>
+          {isSpeaking ? <XIcon className='h-4 w-4' /> : <PlayIcon className='h-4 w-4' />}
         </Button>
         <div className='flex justify-between items-center space-x-2 pt-6'>
           <Button
