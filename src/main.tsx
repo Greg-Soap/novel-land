@@ -1,32 +1,33 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import './index.css'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "./index.css";
 
-import NovelViewer from './components/novel-veiwer'
-import Root from './pages/root'
-import Novels from './pages/novels'
-import { ThemeProvider } from './components/theme-provider'
+import NovelViewer from "./components/novel-veiwer";
+import Root from "./pages/root";
+import Novels from "./pages/novels";
+import { ThemeProvider } from "./components/theme-provider";
+import NovelReader from "./components/novel-reader";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <Root />,
   },
   {
-    path: '/novels',
+    path: "/novels",
     element: <Novels />,
   },
   {
-    path: '/reader/:filename',
-    element: <NovelViewer />,
+    path: "/reader/:filename",
+    element: <NovelReader />,
   },
-])
+]);
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <RouterProvider router={router} />
     </ThemeProvider>
-  </StrictMode>,
-)
+  </StrictMode>
+);
