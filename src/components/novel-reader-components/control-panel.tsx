@@ -1,7 +1,13 @@
 import { cn } from "@/lib/utils";
 import type { FontSize } from "./theme";
 import { Button } from "../ui/button";
-import { Select, SelectValue, SelectContent, SelectItem } from "../ui/select";
+import {
+  Select,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "../ui/select";
 import {
   ChevronRightIcon,
   MenuIcon,
@@ -9,9 +15,8 @@ import {
   PlayIcon,
   XIcon,
 } from "lucide-react";
-import { SelectTrigger } from "../ui/select";
 import type { TTSHookState } from "tts-react";
-// import { Slider } from "../ui/slider";
+import { Slider } from "../ui/slider";
 
 export default function ControlPanel({
   isMenuExpanded,
@@ -27,14 +32,11 @@ export default function ControlPanel({
   ttsStop,
   //   onPitchChange,
   onRateChange,
-  onLangChange,
   onVoiceChange,
   //   pitch,
   rate,
-  lang,
   voice,
   voices,
-  locales,
 }: {
   isMenuExpanded: boolean;
   toc: { href: string; label: string }[];
@@ -51,14 +53,12 @@ export default function ControlPanel({
   ttsStop: () => void;
   //   onPitchChange: (pitch: number) => void;
   onRateChange: (rate: number) => void;
-  onLangChange: (lang: string) => void;
   onVoiceChange: (voice: SpeechSynthesisVoice) => void;
   //   pitch: number;
   rate: number;
-  lang?: string;
+
   voice?: SpeechSynthesisVoice;
   voices: SpeechSynthesisVoice[];
-  locales: string[];
 }) {
   return (
     <div
@@ -111,90 +111,39 @@ export default function ControlPanel({
             <XIcon className="h-4 w-4" />
           </Button>
         </div>
-        {/* <div className="flex space-x-2">
-          <p>Rate</p>
-          <Slider
-            defaultValue={[33]}
-            max={100}
-            step={1}
-            onChange={onRateChange}
-          />
-        </div>
-        <div className="flex space-x-2">
-          <p>Pitch</p>
-          <Slider
-            defaultValue={[33]}
-            max={100}
-            step={1}
-            onChange={onPitchChange}
-          />
-        </div> */}
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Rate:</p>
+            <Slider
+              min={0.5}
+              max={2}
+              step={0.1}
+              value={[rate]}
+              onValueChange={([value]) => onRateChange(value)}
+            />
+            <span className="text-sm">{rate.toFixed(1)}</span>
+          </div>
 
-        {/* <Select onValueChange={onVoiceChange}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a voice" />
-          </SelectTrigger>
-          <SelectContent className="z-[9999]">
-            <SelectItem value="">-- Select a voice --</SelectItem>
-           
-          </SelectContent>
-        </Select> */}
-
-        <label>
-          Language:
-          <select value={lang} onChange={(e) => onLangChange(e.target.value)}>
-            {locales.map((locale) => (
-              <option key={locale} value={locale}>
-                {locale}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Voice:
-          <select
+          <Select
             value={voice?.name}
-            onChange={(e) => {
-              const selectedVoice = voices.find(
-                (v) => v.name === e.target.value
-              );
+            onValueChange={(value) => {
+              const selectedVoice = voices.find((v) => v.name === value);
               if (selectedVoice) onVoiceChange(selectedVoice);
             }}
           >
-            {voices
-              .filter((v) => v.lang === lang)
-              .map((v) => (
-                <option key={v.name} value={v.name}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select voice" />
+            </SelectTrigger>
+            <SelectContent className="z-[9999]">
+              {voices.map((v) => (
+                <SelectItem key={v.name} value={v.name}>
                   {v.name}
-                </option>
+                </SelectItem>
               ))}
-          </select>
-        </label>
-        <label>
-          Rate:
-          <input
-            type="range"
-            min="0.5"
-            max="2"
-            step="0.1"
-            value={rate}
-            onChange={(e) => onRateChange(Number.parseFloat(e.target.value))}
-          />
-          <span>{rate.toFixed(1)}</span>
-        </label>
+            </SelectContent>
+          </Select>
+        </div>
 
-        {/* <label>
-          Pitch:
-          <input
-            type="range"
-            min="0.5"
-            max="2"
-            step="0.1"
-            value={pitch}
-            onChange={(e) => onPitchChange(Number.parseFloat(e.target.value))}
-          />
-          <span>{pitch.toFixed(1)}</span>
-        </label> */}
         <Select value={fontSize} onValueChange={onFontSizeChange}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Font Size" />

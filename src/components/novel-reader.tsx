@@ -54,11 +54,7 @@ export default function NovelReader() {
       };
     }
   }
-  const toLocales = (voices: SpeechSynthesisVoice[]) =>
-    Array.from(new Set(voices.map((voice) => voice.lang)));
-  const [locales, setLocales] = useState(() =>
-    toLocales(window.speechSynthesis.getVoices() ?? [])
-  );
+
   const [lang, setLang] = useState<string | undefined>();
   const [rate, setRate] = useState(1);
   //   const [ setPitch] = useState(1);
@@ -67,7 +63,6 @@ export default function NovelReader() {
   useEffect(() => {
     if (!voices.length) {
       voices = window.speechSynthesis.getVoices();
-      setLocales(toLocales(voices));
     }
   }, []);
 
@@ -100,11 +95,6 @@ export default function NovelReader() {
 
   const handleRateChange = useCallback((newRate: number) => {
     setRate(newRate);
-  }, []);
-
-  const handleLangChange = useCallback((newLang: string) => {
-    setLang(newLang);
-    setVoice(undefined); // Reset voice when language changes
   }, []);
 
   const handleVoiceChange = useCallback((newVoice: SpeechSynthesisVoice) => {
@@ -162,14 +152,11 @@ export default function NovelReader() {
             ttsStop={stop}
             // onPitchChange={handlePitchChange}
             onRateChange={handleRateChange}
-            onLangChange={handleLangChange}
             onVoiceChange={handleVoiceChange}
             // pitch={pitch}
             rate={rate}
-            lang={lang}
             voice={voice}
             voices={voices}
-            locales={locales}
           />
         </div>
       </div>
