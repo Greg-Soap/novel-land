@@ -3,7 +3,6 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 
-import NovelViewer from "./components/novel-veiwer";
 import Root from "./pages/root";
 import Novels from "./pages/novels";
 import { ThemeProvider } from "./components/theme-provider";
